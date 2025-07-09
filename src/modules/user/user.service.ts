@@ -1,86 +1,51 @@
-import { UserModel } from "./user.model";
-import { IUser, IOrder } from "./user.interface";
+// src/modules/user/user.service.ts
 
-const formatNotFound = {
-  success: false,
-  message: "User not found",
-  error: {
-    code: 404,
-    description: "User not found!",
-  },
-};
+import config from "../../app/config";
+import { IStudent } from "../student/student.interface";
+import { Student } from "../student/student.model";
+import { IUser } from "./user.interface";
+import { User } from "./user.model";
 
-export const createUserService = async (userData: IUser) => {
-  const createdUser = await UserModel.create(userData);
-  return createdUser.toObject();
-};
+export const UserService = {
+  createStudent: async (
+    password: string,
+    studentData: IStudent
+  ): Promise<IStudent> => {
+    const user: Partial<IUser> = {};
 
-export const getAllUsersService = async () => {
-  return UserModel.find(
-    { isDeleted: false },
-    {
-      username: 1,
-      fullName: 1,
-      age: 1,
-      email: 1,
-      address: 1,
-      _id: 0,
+    user.password = password || (config.default_pass as string);
+    user.role = "student";
+    user.id = "2030100001";
+
+    // ✅ Create the user first
+    const result = await User.create(user);
+
+    // ✅ Ensure user was created
+    if (result && result._id) {
+      studentData.id = result.id;
+      (studentData as any).user = result._id; //referencing to a `user` field
+      const studentResult = await Student.create(studentData);
+      return studentResult;
     }
-  );
-};
 
-export const getSingleUserService = async (userId: number) => {
-  const user = await UserModel.findOne(
-    { userId, isDeleted: false },
-    { password: 0, __v: 0 }
-  );
-  if (!user) throw formatNotFound;
-  return user;
-};
+    throw new Error("Failed to create user");
+  },
 
-export const updateUserService = async (
-  userId: number,
-  updateData: Partial<IUser>
-) => {
-  const user = await UserModel.findOneAndUpdate({ userId }, updateData, {
-    new: true,
-    projection: { password: 0, __v: 0 },
-  });
-  if (!user) throw formatNotFound;
-  return user;
-};
+  createUser: async (payload: IUser): Promise<IUser> => {
+    const result = await User.create(payload);
+    return result;
+  },
 
-export const deleteUserService = async (userId: number) => {
-  const user = await UserModel.findOne({ userId });
-  if (!user) throw formatNotFound;
+  getAllUsers: async (): Promise<IUser[]> => {
+    const result = await User.find();
+    return result;
+  },
 
-  user.isDeleted = true;
-  await user.save();
-};
+  getUserById: async (id: string): Promise<IUser | null> => {
+    return await User.findById(id);
+  },
 
-export const addOrderToUserService = async (userId: number, order: IOrder) => {
-  const user = await UserModel.findOne({ userId });
-  if (!user) throw formatNotFound;
-
-  user.orders = user.orders || [];
-  user.orders.push(order);
-  await user.save();
-};
-
-export const getUserOrdersService = async (userId: number) => {
-  const user = await UserModel.findOne({ userId });
-  if (!user) throw formatNotFound;
-  return user.orders || [];
-};
-
-export const calculateTotalOrderPriceService = async (userId: number) => {
-  const user = await UserModel.findOne({ userId });
-  if (!user) throw formatNotFound;
-
-  const totalPrice = (user.orders || []).reduce(
-    (acc, order) => acc + order.price * order.quantity,
-    0
-  );
-
-  return totalPrice;
+  deleteUser: async (id: string): Promise<IUser | null> => {
+    return await User.findByIdAndDelete(id);
+  },
 };

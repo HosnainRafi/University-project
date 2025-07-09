@@ -1,30 +1,17 @@
-export interface IFullName {
-  firstName: string;
-  lastName: string;
-}
+// src/modules/user/user.interface.ts
 
-export interface IAddress {
-  street: string;
-  city: string;
-  country: string;
-}
+import { Types } from "mongoose";
 
-export interface IOrder {
-  productName: string;
-  price: number;
-  quantity: number;
-}
+export type UserRole = "student" | "faculty" | "admin";
 
 export interface IUser {
-  userId: number;
-  username: string;
+  _id?: Types.ObjectId;
+  id: string;
   password: string;
-  fullName: IFullName;
-  age: number;
-  email: string;
-  isActive: boolean;
-  hobbies: string[];
-  address: IAddress;
-  orders?: IOrder[];
-  isDeleted: boolean;
+  needsPasswordChange: boolean;
+  role: UserRole;
+  status: "in-progress" | "blocked";
+  isDeleted?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
