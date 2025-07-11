@@ -1,6 +1,3 @@
-// src/modules/user/user.controller.ts
-
-import { Request, Response } from "express";
 import catchAsync from "../../shared/catchAsync";
 import sendResponse from "../../shared/sendResponse";
 import httpStatus from "http-status";
@@ -9,7 +6,7 @@ import { IUser } from "./user.interface";
 import { IStudent } from "../student/student.interface";
 
 export const UserController = {
-  createStudent: catchAsync(async (req: Request, res: Response) => {
+  createStudent: catchAsync(async (req, res) => {
     const { password, student } = req.body;
     const result = await UserService.createStudent(password, student);
     sendResponse<IStudent>(res, {
@@ -20,7 +17,7 @@ export const UserController = {
     });
   }),
 
-  createUser: catchAsync(async (req: Request, res: Response) => {
+  createUser: catchAsync(async (req, res) => {
     const result = await UserService.createUser(req.body);
     sendResponse<IUser>(res, {
       statusCode: httpStatus.CREATED,
@@ -30,7 +27,7 @@ export const UserController = {
     });
   }),
 
-  getAllUsers: catchAsync(async (_req: Request, res: Response) => {
+  getAllUsers: catchAsync(async (_req, res) => {
     const result = await UserService.getAllUsers();
     sendResponse<IUser[]>(res, {
       statusCode: httpStatus.OK,
@@ -40,7 +37,7 @@ export const UserController = {
     });
   }),
 
-  getUserById: catchAsync(async (req: Request, res: Response) => {
+  getUserById: catchAsync(async (req, res) => {
     const { id } = req.params;
     const result = await UserService.getUserById(id);
 
@@ -60,7 +57,7 @@ export const UserController = {
     });
   }),
 
-  deleteUser: catchAsync(async (req: Request, res: Response) => {
+  deleteUser: catchAsync(async (req, res) => {
     const { id } = req.params;
     const result = await UserService.deleteUser(id);
     if (!result) {
