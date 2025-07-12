@@ -29,3 +29,7 @@ export interface IAcademicSemester {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export type IAcademicSEmesterNameCodeMapper = {
+  [key: string]: string;
+};
