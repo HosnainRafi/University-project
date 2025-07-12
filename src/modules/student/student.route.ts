@@ -2,8 +2,6 @@
 
 import express from "express";
 import { StudentController } from "./student.controller";
-import { createStudentZodSchema } from "./student.validation";
-import { validateRequest } from "../../middlewares/validateRequest";
 
 const router = express.Router();
 

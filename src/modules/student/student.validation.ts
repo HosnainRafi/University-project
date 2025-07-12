@@ -12,7 +12,6 @@ export const createStudentZodSchema = z.object({
     .string()
     .min(6, "Password is required and must be at least 6 characters"),
   student: z.object({
-    id: z.string().min(1, "ID is required"),
     name: z.string().min(1, "Name is required"),
     gender: z.enum(["male", "female", "other"]),
     dateOfBirth: z.string().min(1, "Date of birth is required"),
